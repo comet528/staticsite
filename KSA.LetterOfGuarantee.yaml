@@ -1,0 +1,1822 @@
+openapi: "3.0.0"
+info:
+  title: "KSA Letter of Guarantee API"
+  description: "## KSA Open Banking Letter of Guarantee API Specification"
+  version: "2023.11.01-final"
+servers:
+  - url: "/open-banking/letter-of-guarantee/2023.11.01-final"
+tags:
+  - name: Letter of Guarantee Consent
+    description: Letter of Guarantee Consent Resource
+  - name: Letter of Guarantee
+    description: Letter of Guarantee Resource
+paths:
+  /letters-of-guarantee-consents:
+    post:
+      tags:
+        - "Letter of Guarantee Consent"
+      summary: "Create a Letter of Guarantee Consent"
+      description: |
+        Initiate Letter of Guarantee Consents       
+      operationId: "CreateLetterOfGuaranteeConsent"
+      parameters:
+        - $ref: "#/components/parameters/authorization"
+        - $ref: "#/components/parameters/x-fapi-auth-date"
+        - $ref: "#/components/parameters/x-fapi-customer-ip-address"
+        - $ref: "#/components/parameters/x-fapi-interaction-id"
+        - $ref: "#/components/parameters/x-customer-user-agent"
+      requestBody:
+        description: |
+          Request Payload
+        content:
+          application/jwt:
+            schema:
+              $ref: "#/components/schemas/OBLetterOfGuaranteeConsentRequestSigned"
+            examples:
+              Consent Request:
+                $ref: "#/components/examples/ConsentRequestSigned"
+        required: true
+      callbacks: 
+        PASP-Event:
+           '{$request.body#/Subscription/Webhook/Url}':
+            post:
+              description: |
+                **This is a generic Webhook definition and SHOULD apply to any Event that is published by the PASP**
+              parameters:
+                - $ref: "#/components/parameters/authorization"
+                - $ref: "#/components/parameters/x-fapi-interaction-id"
+              requestBody:
+                required: true
+                content:
+                  application/jwt:
+                    schema:
+                        $ref: "#/components/schemas/WebhookEventSigned"
+                    examples:
+                      Signed Webhook Request:
+                         $ref: "#/components/examples/WebhookRequestSigned"                
+              responses:
+                '202':
+                  $ref: "#/components/responses/TPPWebhookResponse"
+                '400':
+                  $ref: "#/components/responses/TPPWebhookResponse"
+                '401':
+                  $ref: "#/components/responses/TPPWebhookResponse"
+                '403':
+                  $ref: "#/components/responses/TPPWebhookResponse"
+                '500':
+                  $ref: "#/components/responses/TPPWebhookResponse"
+              security:
+                - PASPWebhookSecurity: []
+      responses:
+        '201':
+          $ref: "#/components/responses/201LetterOfGuaranteeConsentCreated"
+        '400':
+          $ref: "#/components/responses/400Error"
+        '401':
+          $ref: "#/components/responses/401Error"
+        '403':
+          $ref: "#/components/responses/403Error"
+        '405':
+          $ref: "#/components/responses/405Error"
+        '406':
+          $ref: "#/components/responses/406Error"
+        '415':
+          $ref: "#/components/responses/415Error"
+        '429':
+          $ref: "#/components/responses/429Error"
+        '500':
+          $ref: "#/components/responses/500Error"
+      security:
+        - TPPOAuth2Security:
+            - "openid"
+            - "lg"      
+  /letters-of-guarantee-consents/{ConsentId}:
+    get:
+      tags:
+        - "Letter of Guarantee Consent"
+      summary: "Get Letter of Guarantee Consent"
+      description: |
+        Retrieve Letter of Guarantee Consents
+      operationId: "GetLetterOfGuaranteeConsentId"
+      parameters:
+        - $ref: "#/components/parameters/authorization"
+        - $ref: "#/components/parameters/ConsentId"
+        - $ref: "#/components/parameters/x-fapi-auth-date"
+        - $ref: "#/components/parameters/x-fapi-customer-ip-address"
+        - $ref: "#/components/parameters/x-fapi-interaction-id"
+        - $ref: "#/components/parameters/x-customer-user-agent"
+      responses:
+        '200':
+          $ref: "#/components/responses/200LetterOfGuaranteeConsentIdRead"
+        '400':
+          $ref: "#/components/responses/400Error"
+        '401':
+          $ref: "#/components/responses/401Error"
+        '403':
+          $ref: "#/components/responses/403Error"
+        '404':
+          $ref: "#/components/responses/404Error"
+        '405':
+          $ref: "#/components/responses/405Error"
+        '406':
+          $ref: "#/components/responses/406Error"
+        '429':
+          $ref: "#/components/responses/429Error"
+        '500':
+          $ref: "#/components/responses/500Error"
+      security:
+        - TPPOAuth2Security:
+            - "openid"
+            - "lg"
+    patch:
+      tags:
+        - "Letter of Guarantee Consent"
+      summary: "Patch Consent"
+      description: |
+        Update a Letter Of Guarantee Consent
+      operationId: "PatchLetterOfGuaranteeConsentId"
+      parameters:
+        - $ref: "#/components/parameters/authorization"
+        - $ref: "#/components/parameters/ConsentId"
+        - $ref: "#/components/parameters/x-fapi-auth-date"
+        - $ref: "#/components/parameters/x-fapi-customer-ip-address"
+        - $ref: "#/components/parameters/x-fapi-interaction-id"
+        - $ref: "#/components/parameters/x-customer-user-agent"
+      requestBody:
+        description: |
+          Request Payload
+        content:
+          application/jwt:
+            schema:
+              $ref: "#/components/schemas/OBPatchConsentSigned"
+            examples:
+              Patch Consent:
+                $ref: "#/components/examples/PatchConsentSigned"
+
+      responses:
+        '204':
+          $ref: "#/components/responses/204LetterOfGuaranteeConsentIdDeleted"
+        '400':
+          $ref: "#/components/responses/400Error"
+        '401':
+          $ref: "#/components/responses/401Error"
+        '403':
+          $ref: "#/components/responses/403Error"
+        '405':
+          $ref: "#/components/responses/405Error"
+        '406':
+          $ref: "#/components/responses/406Error"
+        '429':
+          $ref: "#/components/responses/429Error"
+        '500':
+          $ref: "#/components/responses/500Error"
+      security:
+        - TPPOAuth2Security:
+            - "openid"
+            - "lg"
+  /letters-of-guarantee:
+    post:
+      tags:
+        - "Letter of Guarantee"
+      summary: "Initiate Letter of Guarantee Requests"
+      description: |
+        Initiate a Letter Of Guarantee Request
+      operationId: "PostLetterOfGuaranteeRequest"
+      parameters:
+        - $ref: "#/components/parameters/authorization"
+        - $ref: "#/components/parameters/x-fapi-auth-date"
+        - $ref: "#/components/parameters/x-fapi-customer-ip-address"
+        - $ref: "#/components/parameters/x-fapi-interaction-id"
+        - $ref: "#/components/parameters/x-customer-user-agent"
+      requestBody:
+        description: |
+          Request Payload
+        required: true        
+        content:
+          application/jwt:
+            schema:
+              $ref: "#/components/schemas/OBLetterOfGuaranteePostRequestSigned"
+            examples:
+              Letter Of Guarantee Request:
+                $ref: "#/components/examples/LetterOfGuaranteeRequest"
+
+      responses:
+        '201':
+          $ref: "#/components/responses/201LetterOfGuaranteeResponse"
+        '400':
+          $ref: "#/components/responses/400Error"
+        '401':
+          $ref: "#/components/responses/401Error"
+        '403':
+          $ref: "#/components/responses/403Error"
+        '405':
+          $ref: "#/components/responses/405Error"
+        '406':
+          $ref: "#/components/responses/406Error"
+        '415':
+          $ref: "#/components/responses/415Error"
+        '429':
+          $ref: "#/components/responses/429Error"
+        '500':
+          $ref: "#/components/responses/500Error"
+      security:
+        - PSUOAuth2Security:
+            - "openid"
+            - "lg"
+  /letters-of-guarantee/{LetterOfGuaranteeId}:
+    get:
+      tags:
+        - "Letter of Guarantee"
+      summary: "Retrieve the Letter of Guarantee"
+      description: |
+        Retrieve a Letter Of Guarantee
+      operationId: "GetLetterOfGuarantee"
+      parameters:
+        - $ref: "#/components/parameters/authorization"
+        - $ref: "#/components/parameters/LetterOfGuaranteeId"
+        - $ref: "#/components/parameters/x-fapi-auth-date"
+        - $ref: "#/components/parameters/x-fapi-customer-ip-address"
+        - $ref: "#/components/parameters/x-fapi-interaction-id"
+        - $ref: "#/components/parameters/x-customer-user-agent"
+      responses:
+        '200':
+          $ref: "#/components/responses/200LetterOfGuaranteeRead"
+        '400':
+          $ref: "#/components/responses/400Error"
+        '401':
+          $ref: "#/components/responses/401Error"
+        '403':
+          $ref: "#/components/responses/403Error"
+        '404':
+          $ref: "#/components/responses/404Error"
+        '405':
+          $ref: "#/components/responses/405Error"
+        '406':
+          $ref: "#/components/responses/406Error"
+        '429':
+          $ref: "#/components/responses/429Error"
+        '500':
+          $ref: "#/components/responses/500Error"
+      security:
+        - PSUOAuth2Security:
+            - "openid"
+            - "lg"
+        - TPPOAuth2Security:
+            - "openid"
+            - "lg"
+components:
+  ############################################
+  # RESPONSES
+  ############################################
+  responses:
+    TPPWebhookResponse:
+      description: "Response Status Code"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          schema:
+            type: "string"
+          required: true
+    403Error:
+      description: "Forbidden"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+      content:
+        application/jwt:
+          schema:
+            $ref: "#/components/schemas/OBErrorResponseSigned"
+          examples:
+            403 Forbidden:
+              $ref: "#/components/examples/Error403ForbiddenSigned"
+    404Error:
+      description: "Not found"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+    405Error:
+      description: "Method Not Allowed"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+    406Error:
+      description: "Not Acceptable"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+    415Error:
+      description: "Unsupported Media Type"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+    429Error:
+      description: "Too Many Requests"
+      headers:
+        Retry-After:
+          description: "Number in seconds to wait"
+          schema:
+            type: "integer"
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          schema:
+            type: "string"
+    500Error:
+      description: "Internal Server Error"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+      content:
+        application/jwt:
+          schema:
+            $ref: "#/components/schemas/OBErrorResponseSigned"
+          examples:
+            Internal Server Error:
+              $ref: "#/components/examples/Error500InternalServerErrorSigned"
+    401Error:
+      description: "Unauthorized"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+    400Error:
+      description: "Bad request"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+      content:
+        application/jwt:
+          schema:
+            $ref: "#/components/schemas/OBErrorResponseSigned"
+          examples:
+            400 Bad Request:
+              $ref: "#/components/examples/Error400BadRequestSigned"
+
+    200LetterOfGuaranteeRead:
+      description: "Letter of Guarantee Response"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+      content:
+        application/jwt:
+          schema:
+            $ref: "#/components/schemas/OBReadLetterOfGuaranteeResponseSigned"
+          examples:
+            Letter Of Guarantee By Id:
+              $ref: "#/components/examples/LetterOfGuaranteeById"
+    201LetterOfGuaranteeResponse:         
+      description: "Letter of Guarantee Request Created"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+      content:
+        application/jwt:
+          schema:
+            $ref: "#/components/schemas/OBLetterOfGuaranteeResponseSigned"    
+          examples:
+            Letter Of Guarantee Response:
+              $ref: "#/components/examples/LetterOfGuaranteeResponse"
+
+    204LetterOfGuaranteeConsentIdDeleted:
+      description: "No Content"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+    200LetterOfGuaranteeConsentIdRead:
+      description: "Letter of Guarantee Consents Read"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+      content:
+        application/jwt:
+          schema:
+            $ref: "#/components/schemas/OBLetterOfGuaranteeConsentResponseSigned"
+          examples:
+            Consent Response:
+              $ref: "#/components/examples/ConsentResponseSigned"
+    201LetterOfGuaranteeConsentCreated:
+      description: "Letter of Guarantee Consents Created"
+      headers:
+        x-fapi-interaction-id:
+          description: "An RFC4122 UID used as a correlation id."
+          required: true
+          schema:
+            type: "string"
+      content:
+        application/jwt:
+          schema:
+            $ref: "#/components/schemas/OBLetterOfGuaranteeConsentResponseSigned"
+          examples:
+            Consent Response:
+              $ref: "#/components/examples/ConsentResponseSigned"
+
+  ############################################
+  # SCHEMAS
+  ############################################
+  schemas:
+    OBPatchConsentSigned: 
+      title: "OBPatchConsentSigned"
+      allOf:
+        - $ref: '#/components/schemas/Jwt'
+        - type: "object"
+          properties:
+            message:
+              $ref: '#/components/schemas/OBPatchConsent'
+          required: [message]              
+    OBPatchConsent:
+      title: "OBPatchConsent"
+      description: "Patch Consent"
+      type: "object"
+      properties:
+        Data:
+          type: "object"
+          description: "Primary data for the resource"
+          required:
+            - "ConsentStatus"
+          properties:
+            ConsentStatus:
+              $ref: "#/components/schemas/OBPatchConsentStatus"
+            ConsentFlags:
+              $ref: "#/components/schemas/OBPatchConsentFlags"                     
+          additionalProperties: false
+        Subscription:
+          $ref: "#/components/schemas/EventNotification"              
+      additionalProperties: false
+    mt798request:
+      title: "mt798request"
+      type: "object"
+      description: |
+        Schema based on a reference to the [Swift MT 798](https://www.swift.com/our-solutions/corporates/network/drive-trade-digitisation/mt-798) Standard
+      required:
+        - "CustomerReferenceNumber"
+        - "MessageCreationDateTime"
+        - "KindOfGuarantee"
+        - "TypeOfGuarantee"
+        - "FormOfGuarantee"
+        - "WordingOfGuarantee"
+        - "LanguageOfStandardWording"
+        - "Applicant"
+        - "GuaranteeAmount"
+        - "ValidityType"
+        - "DeliveryOfOriginalGuarantee"
+        - "DeliveryTo"
+        - "DeliveryAddress"
+        - "Beneficiary"
+        - "LiabilityDetails"
+        - "ReferenceDate1"
+        - "TotalOrderAmount"
+        - "GuaranteeValueInPercent"
+        - "CustomerContact"
+        - "BeneficiaryContact"
+        - "TransactionReferenceNumber"
+        - "FurtherIdentification"
+        - "ApplicableRules"
+        - "LetterOfGuaranteeStartDate"
+        - "TermsAndConditions"
+        - "DetailsOfGuarantee"
+      properties:
+        CustomerReferenceNumber:
+          $ref: "#/components/schemas/CustomerReferenceNumber"          
+        MessageCreationDateTime:
+          $ref: "#/components/schemas/MessageCreationDateTime"
+        KindOfGuarantee:
+          $ref: "#/components/schemas/KindOfGuarantee"          
+        TypeOfGuarantee:
+          $ref: "#/components/schemas/TypeOfGuarantee"          
+        FormOfGuarantee:
+          $ref: "#/components/schemas/FormOfGuarantee"          
+        WordingOfGuarantee:
+          $ref: "#/components/schemas/WordingOfGuarantee"    
+        SpecialTerms:
+          $ref: "#/components/schemas/SpecialTerms"    
+        LanguageOfStandardWording:
+          $ref: "#/components/schemas/LanguageOfStandardWording"
+        ProjectName:
+          $ref: "#/components/schemas/ProjectName"
+        ProjectNumber:
+          $ref: "#/components/schemas/ProjectNumber"
+        Applicant:
+          $ref: "#/components/schemas/Applicant"
+        GuaranteeAmount:
+          $ref: "#/components/schemas/GuaranteeAmount"
+        ValidityType:
+          $ref: "#/components/schemas/ValidityType"
+        ValidityExpiryDate:
+          $ref: "#/components/schemas/ValidityExpiryDate"
+        DeliveryOfOriginalGuarantee:
+          $ref: "#/components/schemas/DeliveryOfOriginalGuarantee"
+        DeliveryTo:
+          $ref: "#/components/schemas/DeliveryTo"
+        DeliveryAddress:
+          $ref: "#/components/schemas/DeliveryAddress"
+        Beneficiary: 
+          $ref: "#/components/schemas/Beneficiary"
+        LiabilityDetails:
+          $ref: "#/components/schemas/LiabilityDetails"
+        Reference:
+          $ref: "#/components/schemas/Reference"
+        ReferenceDate1:
+          $ref: "#/components/schemas/ReferenceDate1"
+        ReferenceDate2:
+          $ref: "#/components/schemas/ReferenceDate2"
+        TotalOrderAmount:
+          $ref: "#/components/schemas/TotalOrderAmount"
+        GuaranteeValueInPercent:
+          $ref: "#/components/schemas/GuaranteeValueInPercent"
+        CustomerContact:
+          $ref: "#/components/schemas/CustomerContact"
+        BeneficiaryContact:
+          $ref: "#/components/schemas/BeneficiaryContact"
+        BankReferenceNumber:
+          $ref: "#/components/schemas/BankReferenceNumber"
+        TransactionReferenceNumber:
+          $ref: "#/components/schemas/TransactionReferenceNumber"
+        FurtherIdentification:
+          $ref: "#/components/schemas/FurtherIdentification"
+        ApplicableRules:
+          $ref: "#/components/schemas/ApplicableRules"
+        ChargesAndFees:
+          $ref: "#/components/schemas/ChargesAndFees" 
+        DetailsOfGuarantee:
+          $ref: "#/components/schemas/DetailsOfGuarantee" 
+        TermsAndConditions:
+          $ref: "#/components/schemas/TermsAndConditions" 
+        LetterOfGuaranteeStartDate: 
+          $ref: "#/components/schemas/LetterOfGuaranteeStartDate" 
+      additionalProperties: false
+    mt798response:
+      title: "mt798response"
+      type: "object"
+      description: |
+        Schema based on a reference to the [Swift MT 798](https://www.swift.com/our-solutions/corporates/network/drive-trade-digitisation/mt-798) Standard
+      required:
+        - "CustomerReferenceNumber"
+        - "MessageCreationDateTime"
+        - "KindOfGuarantee"
+        - "TypeOfGuarantee"
+        - "FormOfGuarantee"
+        - "WordingOfGuarantee"
+        - "LanguageOfStandardWording"
+        - "Applicant"
+        - "GuaranteeAmount"
+        - "ValidityType"
+        - "DeliveryOfOriginalGuarantee"
+        - "DeliveryTo"
+        - "DeliveryAddress"
+        - "Beneficiary"
+        - "LiabilityDetails"
+        - "ReferenceDate1"
+        - "TotalOrderAmount"
+        - "GuaranteeValueInPercent"
+        - "CustomerContact"
+        - "BeneficiaryContact"
+        - "TransactionReferenceNumber"
+        - "FurtherIdentification"
+        - "ApplicableRules"
+        - "LetterOfGuaranteeStartDate"
+        - "TermsAndConditions"
+        - "DetailsOfGuarantee"      
+      properties:
+        CustomerReferenceNumber:
+          $ref: "#/components/schemas/CustomerReferenceNumber"          
+        MessageCreationDateTime:
+          $ref: "#/components/schemas/MessageCreationDateTime"
+        KindOfGuarantee:
+          $ref: "#/components/schemas/KindOfGuarantee"          
+        TypeOfGuarantee:
+          $ref: "#/components/schemas/TypeOfGuarantee"          
+        FormOfGuarantee:
+          $ref: "#/components/schemas/FormOfGuarantee"          
+        WordingOfGuarantee:
+          $ref: "#/components/schemas/WordingOfGuarantee"    
+        SpecialTerms:
+          $ref: "#/components/schemas/SpecialTerms"    
+        LanguageOfStandardWording:
+          $ref: "#/components/schemas/LanguageOfStandardWording"
+        ProjectName:
+          $ref: "#/components/schemas/ProjectName"
+        ProjectNumber:
+          $ref: "#/components/schemas/ProjectNumber"
+        Applicant:
+          $ref: "#/components/schemas/Applicant"
+        GuaranteeAmount:
+          $ref: "#/components/schemas/GuaranteeAmount"
+        ValidityType:
+          $ref: "#/components/schemas/ValidityType"
+        ValidityExpiryDate:
+          $ref: "#/components/schemas/ValidityExpiryDate"
+        DeliveryOfOriginalGuarantee:
+          $ref: "#/components/schemas/DeliveryOfOriginalGuarantee"
+        DeliveryTo:
+          $ref: "#/components/schemas/DeliveryTo"
+        DeliveryAddress:
+          $ref: "#/components/schemas/DeliveryAddress"
+        Beneficiary: 
+          $ref: "#/components/schemas/Beneficiary"
+        LiabilityDetails:
+          $ref: "#/components/schemas/LiabilityDetails"
+        Reference:
+          $ref: "#/components/schemas/Reference"
+        ReferenceDate1:
+          $ref: "#/components/schemas/ReferenceDate1"
+        ReferenceDate2:
+          $ref: "#/components/schemas/ReferenceDate2"
+        TotalOrderAmount:
+          $ref: "#/components/schemas/TotalOrderAmount"
+        GuaranteeValueInPercent:
+          $ref: "#/components/schemas/GuaranteeValueInPercent"
+        CustomerContact:
+          $ref: "#/components/schemas/CustomerContact"
+        BeneficiaryContact:
+          $ref: "#/components/schemas/BeneficiaryContact"
+        BankReferenceNumber:
+          $ref: "#/components/schemas/BankReferenceNumber"
+        TransactionReferenceNumber:
+          $ref: "#/components/schemas/TransactionReferenceNumber"
+        FurtherIdentification:
+          $ref: "#/components/schemas/FurtherIdentification"
+        ApplicableRules:
+          $ref: "#/components/schemas/ApplicableRules"
+        ChargesAndFees:
+          $ref: "#/components/schemas/ChargesAndFees" 
+        DetailsOfGuarantee:
+          $ref: "#/components/schemas/DetailsOfGuarantee" 
+        TermsAndConditions:
+          $ref: "#/components/schemas/TermsAndConditions" 
+        LetterOfGuaranteeStartDate: 
+          $ref: "#/components/schemas/LetterOfGuaranteeStartDate" 
+        GuaranteeNumber:
+          $ref: "#/components/schemas/GuaranteeNumber"    
+        SpecialAgreements:
+          $ref: "#/components/schemas/SpecialAgreements"
+        BankContact:
+          $ref: "#/components/schemas/BankContact"
+        BankToCorporateInformation:
+          $ref: "#/components/schemas/BankToCorporateInformation"
+        SpecificationOfExpiry:
+          $ref: "#/components/schemas/SpecificationOfExpiry"
+        Refusal: 
+          $ref: "#/components/schemas/OBLetterOfGuaranteeRefusal"           
+      additionalProperties: false         
+    OBActiveCurrencyAndAmount_SimpleType:
+      title: "OBActiveCurrencyAndAmount_SimpleType"
+      description: "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217."
+      type: "string"
+      pattern: "^\\d{1,13}$|^\\d{1,13}\\.\\d{1,5}$"
+    ActiveOrHistoricCurrencyCode:
+      title: "ActiveOrHistoricCurrencyCode"
+      description: "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\"."
+      type: "string"
+      pattern: "^[A-Z]{3,3}$"
+      example: "SAR"
+    GuaranteeAmount:
+      title: "GuaranteeAmount"
+      description: "This field specifies the type of guarantee amount, the currency code of the amount and the amount of the guarantee. CODES:PRIN = PRINCIPAL LIABILITY ONLY IINT = INCLUDING INTEREST,ICST = INCLUDING COSTS,IIAC = INCLUDING INTEREST AND COSTS,XINT = PLUS INTEREST,XCST = PLUS COSTS,XIAC = PLUS INTEREST AND COSTS"
+      type: "object"
+      properties:
+        Type: 
+          type: "string"
+          enum: 
+           - "PRIN"
+           - "IINT"
+           - "ICST"
+           - "IIAC"
+           - "XINT"
+           - "XCST"
+           - "XIAC"
+        Amount:
+          $ref: "#/components/schemas/OBActiveCurrencyAndAmount_SimpleType"
+        Currency:
+          $ref: "#/components/schemas/ActiveOrHistoricCurrencyCode"
+      additionalProperties: false
+    OBLetterOfGuaranteeRefusal:
+      title: "OBLetterOfGuaranteeRefusal"
+      type: "object"
+      description: |
+        Refusal
+      properties:
+        DemandSubmissionDate:
+          $ref: "#/components/schemas/ISODateTime"
+        DemandAmount:
+          description: "DemandAmount Amount (Type)(Currency)(Amount)"
+          type: "string"
+          example: "PRIN/SAR50000"
+        ReasonForRefusal:
+          description: "Reason for Refusal"
+          type: "string"
+      additionalProperties: false
+    Jwt:
+      title: "Jwt"
+      description: |
+        A JSON Web Token (JWT) as described in RFC [https://www.rfc-editor.org/rfc/rfc7519](https://www.rfc-editor.org/rfc/rfc7519)
+      type: "object"
+      properties:
+        iss:
+          description: |
+            [https://www.rfc-editor.org/rfc/rfc7519#section-4.1.1](https://www.rfc-editor.org/rfc/rfc7519#section-4.1.1)          
+          type: string
+        exp:
+          description: |
+            [https://www.rfc-editor.org/rfc/rfc7519#section-4.1.4](https://www.rfc-editor.org/rfc/rfc7519#section-4.1.4)          
+          type: number
+        nbf:
+          description: |
+            [https://www.rfc-editor.org/rfc/rfc7519#section-4.1.5](https://www.rfc-editor.org/rfc/rfc7519#section-4.1.5)          
+          type: number
+        aud:
+          description: |
+            [https://www.rfc-editor.org/rfc/rfc7519#section-4.1.3](https://www.rfc-editor.org/rfc/rfc7519#section-4.1.3)          
+          type: array
+          items:
+            type: string
+        iat:
+          description: |
+            [https://www.rfc-editor.org/rfc/rfc7519#section-4.1.6](https://www.rfc-editor.org/rfc/rfc7519#section-4.1.6)          
+          type: number
+      required: [ iss, exp, nbf ]
+    OBLetterOfGuaranteeConsentRequestSigned:
+      title: "OBLetterOfGuaranteeConsentRequestSigned"
+      allOf:
+        - $ref: '#/components/schemas/Jwt'
+        - type: "object"
+          properties:
+            message:
+              $ref: '#/components/schemas/OBLetterOfGuaranteeConsentRequest'
+          required: [message]       
+    OBLetterOfGuaranteeConsentResponseSigned:
+      title: "OBLetterOfGuaranteeConsentResponseSigned"
+      allOf:
+        - $ref: '#/components/schemas/Jwt'
+        - type: "object"
+          properties:
+            message:
+              $ref: '#/components/schemas/OBLetterOfGuaranteeConsentResponse'
+          required: [message]     
+    OBLetterOfGuaranteePostRequestSigned:
+      title: "OBLetterOfGuaranteePostRequestSigned"
+      allOf:
+        - $ref: '#/components/schemas/Jwt'
+        - type: "object"
+          properties:
+            message:
+              $ref: '#/components/schemas/OBLetterOfGuaranteePostRequest'
+          required: [message]         
+    OBLetterOfGuaranteeResponseSigned:
+      title: "OBLetterOfGuaranteeResponseSigned"
+      allOf:
+        - $ref: '#/components/schemas/Jwt'
+        - type: "object"
+          properties:
+            message:
+              $ref: '#/components/schemas/OBLetterOfGuaranteeResponse'
+          required: [message]         
+    OBReadLetterOfGuaranteeResponseSigned:
+      title: "OBReadLetterOfGuaranteeResponseSigned"
+      allOf:
+        - $ref: '#/components/schemas/Jwt'
+        - type: "object"
+          properties:
+            message:
+              $ref: '#/components/schemas/OBReadLetterOfGuaranteeResponse'
+          required: [message]        
+    OBErrorResponseSigned:
+      title: "OBErrorResponseSigned"
+      allOf:
+        - $ref: '#/components/schemas/Jwt'
+        - type: "object"
+          properties:
+            message:
+              $ref: '#/components/schemas/OBErrorResponse'
+          required: [message]         
+    WebhookEventSigned:
+      title: "WebhookEventSigned"
+      allOf:
+        - $ref: '#/components/schemas/Jwt'
+        - type: "object"
+          properties:
+            message:
+              $ref: '#/components/schemas/WebhookEvent'
+          required: [message]               
+    EventNotification:
+      title: "EventNotification"
+      type: "object"
+      description: |
+        A Webhook Subscription Schema
+      required:
+        - "Webhook"        
+      properties:
+        Webhook:
+          description: |
+            A Webhook Schema
+          type: "object"
+          properties:
+            Url: 
+              description: |
+                The TPP Callback URL being registered with the PASP 
+              type: "string"
+              example: "https://api.tpp.com/webhook/callbackUrl"
+            IsActive:
+              description: |
+                The TPP specifying whether the PASP should send (IsActive true) or not send (IsActive false) Webhook Notifications to the TPP's Webhook URL 
+              type: "boolean"
+              example: false
+          additionalProperties: false
+      additionalProperties: false
+    WebhookEvent:
+      title: "WebhookEvent"
+      type: "object"
+      required:
+      - "Data"
+      - "EventMeta"
+      properties:
+        Data:
+          title: "Data"
+          type: "object"
+          description: "Event Data. This SHOULD contain the same schema as the API resource that has triggered the Event."
+        Links:
+          $ref: "#/components/schemas/Links"
+        EventMeta:
+          title: "EventMeta"
+          description: "Event Metadata"
+          type: "object"
+          required: 
+          - "EventDateTime"
+          - "EventResource"
+          - "EventType"
+          - "ConsentId"
+          properties:
+            EventDateTime:
+              type: "string"
+              format: "date-time"
+              description: "Date Time of the first Event in the Message. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00"
+            EventResource:
+              type: "string"
+              description: "The API resource to which the Event itself is associated"
+              example: "/letters-of-guarantee/123"
+            EventType:
+              type: "string"
+              enum: ["KSAOB.Resource.Created", "KSAOB.Resource.Updated", "KSAOB.Resource.Deleted"]
+              description: "The Type of Event"
+            ConsentId:
+              description: "Unique identification as assigned to identify the consents resource."
+              type: "string"
+              minLength: 1
+              maxLength: 128
+          additionalProperties: false
+      additionalProperties: false
+    OBLetterOfGuaranteeConsentRequest:
+      title: "OBLetterOfGuaranteeConsentRequest"
+      description: "Consent Request"
+      type: "object"
+      required:
+        - "Data"
+      properties: 
+        Data:
+          type: "object"
+          description: "Primary data for the resource"
+          required:
+            - "Mt798"
+          properties:
+            AuthorizationExpirationTimeWindow:
+              $ref: "#/components/schemas/OBAuthorizationExpirationTimeWindow"
+            Mt798:
+              $ref: "#/components/schemas/mt798request" 
+          additionalProperties: false
+        Subscription:
+          $ref: "#/components/schemas/EventNotification"                                
+      additionalProperties: false
+    OBLetterOfGuaranteeConsentResponse:
+      title: "OBLetterOfGuaranteeConsentResponse"
+      description: "Consent Response"
+      type: "object"
+      required:
+        - "Data"
+        - "Links"
+        - "Meta"
+      properties:
+        Data:
+          type: "object"
+          description: "Primary data for the resource"
+          required:
+            - "ConsentId"
+            - "CreationDateTime"
+            - "ConsentStatus"
+            - "ConsentStatusUpdateDateTime"
+            - "AuthorizationExpirationTimeWindow"
+            - "Mt798"
+          properties:
+            ConsentId:
+              $ref: "#/components/schemas/ConsentId"
+            CreationDateTime:
+              $ref: "#/components/schemas/CreationDateTime"
+            ConsentStatus:
+              $ref: "#/components/schemas/OBConsentStatus"
+            ConsentFlags:
+              $ref: "#/components/schemas/OBConsentFlags"
+            ConsentStatusUpdateDateTime:
+              $ref: "#/components/schemas/StatusUpdateDateTime"
+            AuthorizationExpirationTimeWindow:
+              $ref: "#/components/schemas/OBAuthorizationExpirationTimeWindow"
+            Mt798:
+              $ref: "#/components/schemas/mt798request" 
+          additionalProperties: false
+        Subscription:
+          $ref: "#/components/schemas/EventNotification"        
+        Links:
+          $ref: "#/components/schemas/Links"
+        Meta:
+          $ref: "#/components/schemas/MetaMultiAuthorization"
+      additionalProperties: false      
+    OBLetterOfGuaranteePostRequest:
+      title: "OBLetterOfGuaranteePostRequest"
+      description: "Letter Of Guarantee Request"
+      type: "object"
+      required:
+        - "Data"
+      properties: 
+        Data:
+          type: "object"
+          description: "Primary data for the resource"
+          required:
+            - "ConsentId"
+          properties:
+            ConsentId:
+              $ref: "#/components/schemas/ConsentId"       
+          additionalProperties: false
+      additionalProperties: false
+    OBLetterOfGuaranteeResponse:
+      title: "OBLetterOfGuaranteeResponse"
+      description: "Letter Of Guarantee Response"
+      type: "object"
+      required:
+        - "Data"
+        - "Links"
+        - "Meta"
+      properties:
+        Data:
+          type: "object"
+          description: "Primary data for the resource"
+          required:
+            - "LetterOfGuaranteeId"
+            - "Status"
+            - "StatusUpdateDateTime"
+            - "ConsentId"
+            - "Mt798"
+          properties:
+            LetterOfGuaranteeId:
+              $ref: "#/components/schemas/LetterOfGuaranteeId"              
+            ConsentId:
+              $ref: "#/components/schemas/ConsentId"          
+            Status:
+              $ref: "#/components/schemas/LetterOfGuaranteeStatus"
+            StatusUpdateDateTime:
+              $ref: "#/components/schemas/StatusUpdateDateTime"    
+            Mt798:
+              $ref: "#/components/schemas/mt798request" 
+          additionalProperties: false
+        Links:
+          $ref: "#/components/schemas/Links"
+        Meta:
+          $ref: "#/components/schemas/MetaMultiAuthorization"
+      additionalProperties: false
+    OBReadLetterOfGuaranteeResponse:
+      title: "OBReadLetterOfGuaranteeResponse"
+      description: "Letter Of Guarantee Response"
+      type: "object"
+      required:
+        - "Data"
+        - "Links"
+        - "Meta"
+      properties:
+        Data:
+          type: "object"
+          description: "Primary data for the resource"
+          required:
+            - "LetterOfGuaranteeId"
+            - "Status"
+            - "StatusUpdateDateTime"
+            - "ConsentId"
+            - "Mt798"
+          properties:
+            LetterOfGuaranteeId:
+              $ref: "#/components/schemas/LetterOfGuaranteeId"
+            ConsentId:
+              $ref: "#/components/schemas/ConsentId"
+            Status:
+              $ref: "#/components/schemas/LetterOfGuaranteeStatus"
+            StatusUpdateDateTime:
+              $ref: "#/components/schemas/StatusUpdateDateTime"    
+            Mt798:
+              $ref: "#/components/schemas/mt798response" 
+          additionalProperties: false
+        Links:
+          $ref: "#/components/schemas/Links"
+        Meta:
+          $ref: "#/components/schemas/MetaMultiAuthorization"
+      additionalProperties: false
+    OBConsentStatus:
+      title: "OBConsentStatus"
+      description: |
+        Specifies the authorization statuses of a consent.
+
+        | Consent Status| State Type| Description|
+        |---------------|-----------|------|
+        | AwaitingAuthorization | Pending | The consent is awaiting authorization.|
+        | Authorized | In Use | The consent has been successfully authorized.  |
+        | Rejected | Terminal | The unauthorized consent has been canceled at the TPP/PISP or rejected at the PASP.|
+        | Finished | Terminal | The consented action(s) have either been completed successfully, the consent has expired.|
+      type: "string"
+      enum:
+        - "AwaitingAuthorization"
+        - "Authorized"
+        - "Rejected"
+        - "Finished"
+    OBConsentFlags:
+      title: "OBConsentFlags"
+      description: |
+        Flags that can be associated with a Consent Status.
+        
+        A Consent Status: 
+        * May not have any associated flags.
+        * May have one or more associated flags.
+        
+        A Flag cannot be changed once it is created. Its state is Immutable.
+        Each Flag value that is set must have a date time stamp associated with it.
+
+        |Flag| Consent Status| Flag Description|
+        |----|---------------|-----------------|
+        | PartlyAuthorized | AwaitingAuthorization | The initiator has authorized the consent and is awaiting further authorizations.|
+        | Activated | Authorized | The consent is being utilized |
+        | Expired | Finished | The consent has expired |
+        | Closed | Finished | The consent has finished with no further inquiries permitted.|
+        ||Rejected| The unauthorized consent has been canceled at the TPP or rejected at the PASP.|
+      type: "object"
+      properties:
+        PartlyAuthorized:
+          $ref: "#/components/schemas/OBFlagDateTime"
+        Activated:
+          $ref: "#/components/schemas/OBFlagDateTime"
+        Expired:
+          $ref: "#/components/schemas/OBFlagDateTime"
+        Closed:
+          $ref: "#/components/schemas/OBFlagDateTime"
+      additionalProperties: false 
+    OBFlagDateTime:
+      title: "OBFlagDateTime"
+      description: "Date and time at which a Flag has been set. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2023-04-05T10:43:07+00:00"
+      type: "string"
+      format: "date-time"
+    OBPatchConsentStatus:
+      title: "OBConsentStatus"
+      description: |
+        Specifies the authorization statuses of a consent.
+
+        | Consent Status| State Type| Description|
+        |---------------|-----------|------|
+        | Rejected | Terminal | The unauthorized consent has been canceled at the TPP/PISP or rejected at the PASP.|
+        | Finished | Terminal | The consented action(s) have either been completed successfully or the consent has expired|
+      type: "string"
+      enum:
+        - "Rejected"
+        - "Finished"
+    OBPatchConsentFlags:
+      title: "OBPatchConsentFlags"
+      description: |
+        Flag that can be associated with a Consent Status.
+        The Flag cannot be changed once it is created. Its state is Immutable.
+        Each Flag value that is set must have a date time stamp associated with it.
+
+        |Flag| Consent Status| Flag Description|
+        |----|---------------|-----------------|
+        | Closed | Finished | The consent has finished with no further inquiries permitted.|
+      type: "object"
+      properties:
+        Closed:
+          $ref: "#/components/schemas/OBFlagDateTime"
+      additionalProperties: false
+    ConsentId:
+      title: "ConsentId"
+      description: "Unique identification as assigned to identify the Letter of Guarantee consent resource."
+      type: "string"
+      minLength: 1
+      maxLength: 128
+    CustomerReferenceNumber:
+      title: "CustomerReferenceNumber"
+      description: "Customer Reference Number"
+      type: "string"
+      example: "XYZ999"
+    GuaranteeNumber:
+      title: "GuaranteeNumber"
+      description: "Reference Number that has been assigned"
+      type: "string"
+      example: "PGFFA0815"
+    KindOfGuarantee:
+      title: "KindOfGuarantee"
+      description: "This field specifies the kind of the guarantee. CODES: GUAR = GUARANTEE, STLC = STANDBY LETTER OF CREDIT, SPDM = SURETY PAYABLE ON FIRST DEMAND SURT = SURETY"
+      type: "string"
+      enum: [GUAR,STLC,SPDM,SURT]
+      example: "GUAR"
+    TypeOfGuarantee:
+      title: "TypeOfGuarantee"
+      description: "Type Of Guarantee. CODES: TEND = TENDER GUARANTEE, ADVP = ADVANCE PAYMENT GUARANTEE, PGDO = PERFORMANCE GUARANTEE (DELIVERY OBLIGATION), PGWO = PERFORMANCE GUARANTEE (WARRANTY OBLIGATION), PGCO = PERFORMANCE GUARANTEE (CONTRACTUAL OBLIGATION), PAYM = PAYMENT GUARANTEE, CRED = CREDIT FACILITIES GUARANTEE, BILL = BILL OF LADING GUARANTEE, LEAS = LEASE GUARANTEE, CUST = CUSTOMS GUARANTEE, OTHR = any other guarantee type, which must be specified in narrative"
+      type: "string"
+      enum: [TEND,ADVP,PGDO,PGWO,PGCO,PAYM,CRED,BILL,CUST,OTHR]
+      example: "TEND"
+    FormOfGuarantee:
+      title: "FormOfGuarantee"
+      description: "This field specifies the form of the guarantee. CODES: DIRC = DIRECT, INDC = INDIRECT"
+      type: "string"
+      enum: [DIRC,INDC]
+      example: "DIRC"
+    WordingOfGuarantee:
+      title: "WordingOfGuarantee"
+      description: "This field specifies the type of wording of the guarantee. CODES: STND = STANDARD WORDING OF ISSUING BANK. WDAP = WORDING DRAFTED BY APPLICANT. WDBF = WORDING DRAFTED BY BENEFICIARY. If this field consists of WDAP or WDBF then DetailsOfGuarantee must be used to specify the body text"
+      type: "string"
+      enum: [STND,WDAP,WDBF]
+      example: "STND"
+    ValidityType:
+      title: "ValidityType"
+      description: "Validity of Guarantee. CODES: LIMT = LIMITED, UNLM = UNLIMITED"
+      type: "string"
+      enum: [LIMT,UNLM]
+      example: "LIMT"
+    LiabilityDetails:
+      title: "LiabilityDetails"
+      description: "Description of the Guaranteed Liability"
+      type: "string"
+      example: "Pumps and Equipment"
+    TransactionReferenceNumber:
+      title: "TransactionReferenceNumber"
+      description: "Transaction Reference Number to Identify the Message. Must be set by the TPP."
+      type: "string"
+      example: "NONREF"
+    FurtherIdentification:
+      title: "FurtherIdentification"
+      description: "Identify the purpose of the Message"
+      type: "string"
+      example: "ISSUE"
+    ApplicableRules:
+      title: "ApplicableRules"
+      description: "Rules of the Guarantee."
+      type: "string"
+      enum: [ISPR,NONE,OTHR,URDG]
+      example: "NONE"
+    DetailsOfGuarantee:
+      title: "DetailsOfGuarantee"
+      description: |
+        Details of the Guarantee to be populated by the PASP. Only used when the WordingOfGuarantee field has values WDAP (Wording drafted by applicant) or WDBF (Wording drafted by beneficiary) otherwise a fixed value of NOT APPLICABLE should be used. MUST be returned using appropriate Markdown Syntax [https://www.markdownguide.org/cheat-sheet/](https://www.markdownguide.org/cheat-sheet/)
+      type: "string"
+      example: "Performance Guarantee No . PGFFA0815.We have been informed that you, Mining PLC, Main Road, Riyadh, hereinafter called the BUYER have concluded the contract No. ABC123 of 05th February 2022, hereinafter called the CONTRACT, with Pumps Riyadh, KSA, hereinafter called the SELLER, according to which the SELLER will deliver to the BUYER pumps and equipment, in the total value of SAR 500.000,00. As agreed the SELLER has to provide a bank guarantee in favour of the BUYER, amounting to 10 percent of the total value, i.e. SAR 50.000,00 , to cover the fulfilment of the SELLER’s obligations under the CONTRACT.In consideration of the aforesaid, we, Bank of Acme, Riyadh, hereby issue the guarantee on behalf of the SELLER towards the BUYER to the maximum amount of SAR 50.000,00 (in words: SAR fifty thousand 00/100) and undertake irrevocably without consideration of any objections and defences of the SELLER or third parties and irrespective of the validity and legal effect of the CONTRACT and waiving any objections arising there from to pay to the BUYER any amount claimed from us by the BUYER up to the maximum amount of this guarantee upon receipt of the BUYER's first demand in writing, in which the BUYER simultaneously confirms that the SELLER is in breach of its obligations towards the BUYER under the CONTRACT.The obligation under this guarantee shall expire on 31st December 2022.Any claim for payment complying with the above conditions must be received by us within the validity period of this guarantee. This guarantee shall be governed by the law of KSA. Exclusive place of jurisdiction shall be KSA, Saudi Arabia."
+    TermsAndConditions:
+      title: "TermsAndConditions"
+      description: |
+       Terms And Conditions of the Guarantee. MUST be returned using appropriate Markdown Syntax [https://www.markdownguide.org/cheat-sheet/](https://www.markdownguide.org/cheat-sheet/)
+      type: "string"
+    SpecialTerms:
+      title: "SpecialTerms"
+      description: "This field specifies any special terms that should apply to the guarantee in case that the wording of the guarantee should be the standard wording of the Issuing Bank. CODES: EFCT = INCL. TERMS OF EFFECTIVENESS, REDC = INCL. TERMS OF REDUCTION, EFRE = INCL. TERMS OF EFFECTIVENESS AND TERMS OF REDUCTION. this field may only be present if field WordingOfGuarantee contains code STND (STANDARD WORDING OF ISSUING BANK). MUST be returned using appropriate Markdown Syntax [https://www.markdownguide.org/cheat-sheet/](https://www.markdownguide.org/cheat-sheet/)"
+      type: "string"
+      enum: [EFCT,REDC,EFRE]
+      example: "EFCT"
+    SpecialAgreements:
+      title: "SpecialAgreements"
+      description: "Special Agreements between Applicant and PASP of the Guarantee"
+      type: "string"
+    BankContact:
+      title: "BankContact"
+      description: "Contact Details at the Bank"
+      type: "string"
+    BankToCorporateInformation:
+      title: "BankToCorporateInformation"
+      description: "Additional Information for the Receiver"
+      type: "string"
+    SpecificationOfExpiry:
+      title: "SpecificationOfExpiry"
+      description: "Expiry of the Guarantee in Free Text Form where it cannot be expressed as a Date"
+      type: "string"
+    LanguageOfStandardWording:
+      title: "LanguageOfStandardWording"
+      description: "Language of wording of the Issuing Bank"
+      type: "string"
+      example: "en"
+    ProjectName:
+      title: "ProjectName"
+      description: "Project Name as provided by the TPP"
+      type: "string"
+      minLength: 1
+      maxLength: 300
+    ProjectNumber:
+      title: "ProjectNumber"
+      description: "Project Number as provided by the TPP"
+      type: "string"
+      minLength: 1
+      maxLength: 100
+    ValidityExpiryDate:
+      title: "ValidityExpiryDate"
+      description: "This field specifies the expiry date of the guarantee. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00"
+      type: "string"
+      format: "date-time"
+    DeliveryOfOriginalGuarantee:
+      title: "DeliveryOfOriginalGuarantee"
+      description: "Method by which the Guarantee will be delivered. CODES: COUR=By Courier e.g. Fedex, DHL, UPS. MAIL=By Mail, REGM=By Registered Mail or Airmail, MESS: By Messenger - Hand Deliver"
+      type: "string"
+      enum: [COUR,MAIL,REGM,MESS]
+      example: "COUR"
+    DeliveryTo:
+      title: "DeliveryTo"
+      description: "Whom will receive the Guarantee. CODES: BENE=Beneficiary, APPL=Applicant, ALTA=Alternative Applicant, SPEC=Specified Address"
+      type: "string"
+      enum: [BENE,APPL,ALTA,SPEC]
+      example: "BENE"
+    DeliveryAddress:
+      title: "DeliveryAddress"
+      type: "object"
+      description: "Delivery Address"
+      properties:
+        Name: 
+          description: "Address of whom will receive the Guarantee "
+          type: "string"
+        Address:
+          $ref: "#/components/schemas/OBAddress"  
+      additionalProperties: false
+    Reference:
+      title: "Reference"
+      description: "This field defines a reference associated with the guarantee. CODES: TEND =TENDER, ORDR= ORDER, CONT=CONTRT, OFFR = OFFER, DEL=DELIVERY, PINV = PROFORMA INVOICE, PROJ = PROJECT"
+      type: "string"
+      enum: [TEND,ORDR,CONT,OFFR,DELV,PINV,PROJ]
+      example: "TEND"
+    ReferenceDate1:
+      title: "ReferenceDate1"
+      description: "This field specifies the date of the reference. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00"
+      type: "string"
+      format: "date-time"              
+    ReferenceDate2:
+      title: "ReferenceDate2"
+      description: "This field may only be used when field Reference consists of TEND (tender) to specify the tender closing date. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00"
+      type: "string"
+      format: "date-time"              
+    LetterOfGuaranteeStartDate:
+      title: "LetterOfGuaranteeStartDate"
+      description: "The start date for the Letter Of Guarantee. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00"
+      type: "string"
+      format: "date-time"              
+    TotalOrderAmount:
+      title: "TotalOrderAmount"
+      description: "This field specifies the currency and total amount of the order/contract. The currency must be the same currency as in field GuaranteeAmount."
+      type: "object"
+      properties: 
+        Amount:
+          $ref: "#/components/schemas/OBActiveCurrencyAndAmount_SimpleType"
+        Currency:
+          $ref: "#/components/schemas/ActiveOrHistoricCurrencyCode"
+      additionalProperties: false
+    GuaranteeValueInPercent:
+      title: "GuaranteeValueInPercent"
+      description: "Guarantee Value in Percent in relation to the Total Order Contract Value"
+      type: "number"
+      example: 10              
+    CustomerContact:
+      title: "CustomerContact"
+      description: "Contact Details of the Corporate"
+      type: "string"
+      example: "John Doe"              
+    BeneficiaryContact:
+      title: "BeneficiaryContact"
+      description: "Contact Details of the Beneficiary"
+      type: "string"
+      example: "Jane Bloggs"            
+    BankReferenceNumber:
+      title: "BankReferenceNumber"
+      description: "This field specifies the reference number of the bank. For example, when the application is a resubmission of a previously rejected submission, this number is the bank reference number conveyed in the rejection message."
+      type: "string"      
+    Applicant:
+      title: "Applicant"
+      type: "object"
+      description: "Schema"
+      properties:
+        Name: 
+          description: "Name of Applicant"
+          type: "string"
+        CommercialRegistrationNumber: 
+          description: "Commercial Registration Number"
+          type: "string"
+        ApplicantIdentifierType:
+          $ref: "#/components/schemas/ApplicantIdentifierType"
+        ApplicantNumber:
+          $ref: "#/components/schemas/ApplicantNumber"
+        Address:
+          $ref: "#/components/schemas/OBAddress"   
+      additionalProperties: false      
+    ApplicantIdentifierType:
+      title: "ApplicantIdentifierType"
+      type: "string"
+      description: "Applicant Identifier Type as specified by the TPP"
+    ApplicantNumber:
+      title: "ApplicantNumber"
+      type: "string"
+      description: "Applicant Number as specified by the TPP"
+    Beneficiary:
+      title: "Beneficiary"
+      type: "object"
+      description: |
+        Beneficiary
+      properties:
+        Name: 
+          description: "Name of Beneficiary"
+          type: "string"
+        CommercialRegistrationNumber: 
+          description: "Commercial Registration Number"
+          type: "string"
+        BeneficiaryIdentifierType:                          
+          $ref: "#/components/schemas/BeneficiaryIdentifierType"   
+        BeneficiaryNumber:
+          $ref: "#/components/schemas/BeneficiaryNumber"   
+        Address:
+          $ref: "#/components/schemas/OBAddress"
+      additionalProperties: false
+    BeneficiaryIdentifierType:
+      title: "BeneficiaryIdentifierType"
+      type: "string"
+      description: "Beneficiary Identifier Type as specified by the TPP"
+    BeneficiaryNumber:
+      title: "BeneficiaryNumber"
+      type: "string"
+      description: "Beneficiary Number as specified by the TPP"
+    OBAddress:
+      title: "OBAddress"
+      description: |
+        (Array) Address information that locates and identifes a specific address, as defined by a national or international postal service."
+      type: "array"
+      minItems: 1
+      items:
+        type: "object"
+        required:
+          - "AddressType"
+          - "Country"
+        properties:
+          AddressType:
+            $ref: "#/components/schemas/OBAddressTypeCode"
+          ShortAddress:
+            $ref: "#/components/schemas/OBShortAddress"
+          UnitNumber:
+            $ref: "#/components/schemas/OBUnitNumber"
+          FloorNumber:
+            $ref: "#/components/schemas/OBFloorNumber"
+          BuildingNumber:
+            $ref: "#/components/schemas/OBBuildingNumber"
+          StreetName:
+            $ref: "#/components/schemas/OBStreetName"
+          SecondaryNumber:
+            $ref: "#/components/schemas/OBSecondaryNumber"
+          District:
+            $ref: "#/components/schemas/OBDistrict"
+          PostalCode:
+            $ref: "#/components/schemas/OBPostalCode"
+          POBox:
+            $ref: "#/components/schemas/OBPOBox"
+          ZipCode:
+            $ref: "#/components/schemas/OBZipCode"
+          City:
+            $ref: "#/components/schemas/OBCity"          
+          Region:
+            $ref: "#/components/schemas/OBRegion"
+          Country:
+            $ref: "#/components/schemas/OBCountryCode"    
+        additionalProperties: false      
+    OBAddressTypeCode:
+      title: "OBAddressTypeCode"
+      description: "Specifies the nature of the Address."
+      type: "string"
+      enum:
+        - "KSAOB.Business"
+        - "KSAOB.Correspondence"
+        - "KSAOB.Residential"
+      example: "KSAOB.Residential"
+    OBShortAddress:
+      title: "OBShortAddress"
+      description: "A short address consists of four letters: region code, branch code, division code, unique code and a four-digit number for the building."
+      type: "string"
+      minLength: 1
+      maxLength: 8
+      example: "ABCD1234"
+    OBUnitNumber:
+      title: "OBUnitNumber"
+      description: "Identifies the unit or apartment number."
+      type: "string"
+      minLength: 1
+      maxLength: 10
+      example: "6"
+    OBFloorNumber:
+      title: "OBFloorNumber"
+      description: "Identifies the building floor number."
+      type: "string"
+      minLength: 1
+      maxLength: 10
+      example: "2"
+    OBBuildingNumber:
+      title: "OBBuildingNumber"
+      description: "Identifies the building number."
+      type: "string"
+      minLength: 1
+      maxLength: 10
+      example: "34"
+    OBStreetName:
+      title: "OBStreetName"
+      description: "Identifies the street name or road."
+      type: "string"
+      minLength: 1
+      maxLength: 70
+      example: "Omar Bin Hassan Street"
+    OBDistrict:
+      title: "OBDistrict"
+      description: "Identifies the district of a city."
+      type: "string"
+      minLength: 1
+      maxLength: 35
+      example: "Olaya Dist."
+    OBCountryCode:
+      title: "OBCountryCode"
+      description: "Indicates the country code in which the address is located (References ISO 3166-1 alpha-2)."
+      type: "string"
+      pattern: "^[A-Z]{2,2}$"
+      example: "SA"
+    OBPostalCode:
+      title: "OBPostalCode"
+      description: " Identifies the postal code; a unique code assigned to a specific geographic area for efficient mail sorting and delivery purposes."
+      type: "string"
+      minLength: 1
+      maxLength: 10                    
+      example: "12345"
+    OBPOBox:
+      title: "POBox"
+      description: " Identifies the POBox."
+      type: "string"
+      minLength: 1
+      maxLength: 10                    
+      example: "11562"
+    OBZipCode:
+      title: "ZipCode"
+      description: "Identifies the ZIP code; a unique code assigned to a specific geographic area for efficient mail sorting and delivery purposes."
+      type: "string"
+      minLength: 1
+      maxLength: 10                    
+      example: "12366"
+    OBSecondaryNumber:
+      title: "OBSecondaryNumber"
+      description: "4 numbers representing the accurate location coordinates of the address"
+      type: "string"
+      minLength: 4
+      maxLength: 4
+      example: "1233"
+    OBCity:
+      title: "OBCity"
+      description: "Identifies the name of the city or town where the address is situated."
+      type: "string"
+      minLength: 1
+      maxLength: 35
+      example: "Riyadh"
+    OBRegion:
+      title: "OBRegion"
+      description: "Identifies the region."
+      type: "string"
+      minLength: 1
+      maxLength: 35
+      example: "North"
+    OBErrorResponse:
+      title: "OBErrorResponse"
+      description: "An array of detail error codes, and messages, and URLs to documentation to help remediation."
+      type: "object"
+      properties:
+        Errors:
+          items:
+            $ref: "#/components/schemas/OBError"
+          type: "array"
+          minItems: 1
+      required:
+        - "Errors"
+      additionalProperties: false
+    OBError:
+      title: "OBError"
+      description: "Error"
+      type: "object"
+      properties:
+        Code:
+          description: "Low level textual error code"
+          type: "string"
+          enum:
+            - "KSAOB.AccessToken.Unauthorized"
+            - "KSAOB.AccessToken.InvalidScope"
+            - "KSAOB.Consent.Cancelled"
+            - "KSAOB.Consent.Invalid"
+            - "KSAOB.JWS.InvalidSignature"
+            - "KSAOB.JWS.Malformed"
+            - "KSAOB.JWS.InvalidClaim"
+            - "KSAOB.JWS.InvalidHeader"
+            - "KSAOB.GenericRecoverableError"
+            - "KSAOB.GenericError"
+            - "KSAOB.JWE.DecryptionError"
+            - "KSAOB.JWE.InvalidHeader"
+            - "KSAOB.Event.UnexpectedEvent"
+            - "KSAOB.Body.InvalidFormat"
+            - "KSAOB.Resource.InvalidResourceId"
+            - "KSAOB.Resource.InvalidFormat"
+            - "KSAOB.Consent.BusinessRuleViolation"
+        Message:
+          description: "A description of the error that occurred. e.g., 'A mandatory field isn't supplied' or 'RequestedExecutionDateTime must be in future'\nKSAOB doesn't standardise this field"
+          type: "string"
+          minLength: 1
+          maxLength: 500
+        Path:
+          description: "Recommended but optional reference to the JSON Path of the field with error, e.g., Data.Initiation.InstructedAmount.Currency"
+          type: "string"
+          minLength: 1
+          maxLength: 500
+        Url:
+          description: "URL to help remediate the problem, or provide more information, or to API Reference, or help etc"
+          type: "string"
+      required:
+        - "Code"
+        - "Message"
+      additionalProperties: false
+      minProperties: 1      
+    Links:
+      title: "Links"
+      type: "object"
+      description: "Links relevant to the payload"
+      properties:
+        Self:
+          description: "A link to the current resource"
+          type: "string"
+          format: "uri"
+      additionalProperties: false
+      required:
+        - "Self"
+    ChargesAndFees:
+      title: "ChargesAndFees"
+      type: "string"
+      description: |
+        Supplementary Information regarding the Charges and Fees to initiate and complete the Letter of Guarantee. MUST be returned using appropriate Markdown Syntax [https://www.markdownguide.org/cheat-sheet/](https://www.markdownguide.org/cheat-sheet/)
+    MetaMultiAuthorization:
+      title: "MetaMultiAuthorization"
+      type: "object"
+      description: |
+        Meta Data with Multi-Authorization relevant to the payload. 
+        For a consent, it represents any Authorizers within the TPP domain that are involved in approving the consent request.
+        For a letter of guarantee, it represents any Authorizers within the PASP domain that are involved in approving the letter of guarantee.
+      properties:
+        MultipleAuthorizers:
+          type: "object"
+          description: "Multiple Authorizers Schema"
+          properties:
+            TotalRequired:
+              description: |
+                The total number of Authorizers required to process the request 
+              type: "number"
+            Authorizations:
+              type: "array"
+              items: 
+                description: |
+                  Authorizer
+                type: "object"
+                properties:
+                  AuthorizerId: 
+                    description: |
+                      The Authorizer's Identifier
+                    type: "string"
+                  AuthorizerName: 
+                    description: |
+                      The Authorizer's Name
+                    type: "string"
+                  AuthorizerType: 
+                    description: |
+                      The Type of Authorizer. For example, Financial, Management, etc. 
+                    type: "string"
+                  AuthorizationDate:
+                    description: |
+                      The DateTime of when the Authorization occurred. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00
+                    type: "string"
+                    format: "date-time"
+                  AuthorizationStatus: 
+                    description: |
+                      The Status reflecting the Authorizer's final decision regarding the request
+                    type: "string"
+                    enum:
+                      - "Pending"
+                      - "Approved"
+                      - "Rejected"
+                additionalProperties: false
+          additionalProperties: false
+      additionalProperties: false      
+    MessageCreationDateTime:
+      title: "MessageCreationDateTime"
+      description: "Date and time at which the message was created. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00"
+      type: "string"
+      format: "date-time"
+    ISODateTime:
+      title: "ISODateTime"
+      description: "All dates in the JSON payloads are represented in ISO 8601 date-time format. All date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00"
+      type: "string"
+      format: "date-time"
+    CreationDateTime:
+      title: "CreationDateTime"
+      description: "Date and time at which the resource was created. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00"
+      type: "string"
+      format: "date-time"  
+    StatusUpdateDateTime:
+      title: "StatusUpdateDateTime" 
+      description: "Date and time at which the resource status was updated. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00"
+      type: "string"
+      format: "date-time"    
+    LetterOfGuaranteeStatus:
+      description: "Specifies the status of the Letter of Guarantee Service Request."
+      type: "string"
+      enum:
+        - "Approved"
+        - "Pending"
+        - "Rejected"
+    LetterOfGuaranteeId:
+      description: "Specifies the ID of the Service Request."
+      type: "string"
+    OBAuthorizationExpirationTimeWindow:
+      title: "OBAuthorizationExpirationTimeWindow" 
+      description: |
+        A time window by which a Consent (in AwaitingAuthorization status) must be Authorized by the PSU.
+        The time window starts from the actual CreationDateTime (when the Consent is staged with the PASP). 
+        If the current time window exceeds the Authorization Expiration Time Window (and the Consent status is AwaitingAuthorization) then the Consent Status must be set to Rejected.
+        The time window is based on a custom time format hhh:mm:ss. e.g. 720:00:00 represents a time window of 720 hours, 00 minutes, 00 seconds (30 days) after the CreationDateTime to Authorize the Consent.  
+      type: "string"
+      pattern: '^(00[0-9]|0[1-9][0-9]|[1-6][0-9]{2}|7[01][0-9]|720):[0-5][0-9]:[0-5][0-9]$'
+      example: "720:00:00"
+  ############################################
+  # PARAMETERS
+  ############################################
+  parameters:
+    #################################################
+    # HEADER PARAMETERS
+    #################################################
+    authorization:
+      in: "header"
+      name: "authorization"
+      required: true
+      description: "An authorization Token as per https://tools.ietf.org/html/rfc6750"
+      schema:
+        type: "string"
+      example: Bearer 12773da5-81c5-45e7-893c-381ca3cecc30
+    x-customer-user-agent:
+      in: "header"
+      name: "x-customer-user-agent"
+      description: "Indicates the user-agent that the PSU is using."
+      required: false
+      schema:
+        type: "string"
+      example: Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1
+    x-fapi-customer-ip-address:
+      in: "header"
+      name: "x-fapi-customer-ip-address"
+      required: false
+      description: "The PSU's IP address if the PSU is currently logged in with the TPP."
+      schema:
+        type: "string"
+      example: 51.235.115.203
+    x-fapi-auth-date:
+      in: "header"
+      name: "x-fapi-auth-date"
+      required: false
+      description: "The time when the PSU last logged in with the TPP. \nAll dates in the HTTP headers are represented as RFC 7231 Full Dates. An example is below: \nSun, 10 Sep 2017 19:43:31 UTC"
+      schema:
+        type: "string"
+        pattern: "^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \\d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \\d{4} \\d{2}:\\d{2}:\\d{2} (GMT|UTC)$"
+      example: Thu, 26 Jan 2023 16:31:32 UTC
+    x-fapi-interaction-id:
+      in: "header"
+      name: "x-fapi-interaction-id"
+      required: false
+      description: "An RFC4122 UID used as a correlation id."
+      schema:
+        type: "string"
+      example: 49df2c2c-6b80-40ee-96a1-71910a248048
+    #################################################
+    # PATH PARAMETERS
+    #################################################
+    ConsentId:
+      name: "ConsentId"
+      in: "path"
+      description: "ConsentId"
+      required: true
+      schema:
+        type: "string"
+      example: kac-558e58cb-01fa-4a8b-abfc-326d04b79bd4
+    LetterOfGuaranteeId:
+      name: "LetterOfGuaranteeId"
+      in: "path"
+      description: "LetterOfGuaranteeId"
+      required: true
+      schema:
+        type: "string"
+      example: a5f68ff6-8ecf-445a-8f0e-907399527a20
+  ############################################
+  # SECURITY SCHEMES
+  ############################################
+  securitySchemes:
+    TPPOAuth2Security:
+      type: oauth2
+      description: "TPP confidential client authorization with the PASP to stage a consent. **Please refer to [OpenID FAPI Security Profile 1.0 -Part 2 Advanced](https://openid.net/specs/openid-financial-api-part-2-1_0.html#authorization-server) - 5.2.2 point 14 - shall authenticate the confidential client using one of the following methods private_key_jwt and [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication) 9. Client Authentication private_key_jwt**"      
+      flows:
+        clientCredentials:
+          tokenUrl: "https://authserver.example/token"
+          scopes:
+            openid: Activates OpenID Connect Support          
+            lg: Ability to initiate letter of guarantee request 
+    PSUOAuth2Security:
+      type: oauth2
+      description: "[OAuth2 PAR flow](https://datatracker.ietf.org/doc/html/rfc9126), it is required when the PSU needs to perform SCA with the PASP when a TPP wants to access an PASP resource owned by the PSU. **Please refer to [OpenID FAPI Security Profile 1.0 -Part 2 Advanced](https://openid.net/specs/openid-financial-api-part-2-1_0.html#authorization-server) - 5.2.2 point 14 - shall authenticate the confidential client using one of the following methods private_key_jwt and [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication) 9. Client Authentication private_key_jwt**"
+      flows:
+        authorizationCode:
+          authorizationUrl: "https://authserver.example/authorization"
+          tokenUrl: "https://authserver.example/token"
+          scopes:
+            openid: Activates OpenID Connect Support
+            "lg:<consentId>": Ability to initiate letter of guarantee request. This is a parameterized scope with the ConsentId
+    PASPWebhookSecurity:
+      type: http
+      description: "The PASP generates a Self Signed JWT Authorization Token for Client Authentication with the TPP. **Please refer to Self-Signed JWT Authorization Token Specification in the KSA Standard API User Guide**"
+      scheme: bearer
+      bearerFormat: JWT             
+  ############################################
+  # EXAMPLES
+  ############################################
+  examples:
+    ConsentRequestSigned:
+      summary: Consent Request
+      description: Consent Request
+      value: {"iss":"51d73cc1-4c03-4f04-83e2-2732bd7add34","exp":1675782186,"nbf":1675780979,"aud":["0c6301dc-dcfb-4860-bfba-d76ebda97c48"],"iat":1675780979,"message":{"Data":{"AuthorizationExpirationTimeWindow":"720:00:00","Mt798":{"CustomerReferenceNumber":"XYZ999","MessageCreationDateTime":"2023-01-31T13:44:00+0300","KindOfGuarantee":"GUAR","TypeOfGuarantee":"TEND","FormOfGuarantee":"DIRC","WordingOfGuarantee":"WDAP","SpecialTerms":"EFCT","LanguageOfStandardWording":"en","ProjectName":"ProjectOne","ProjectNumber":"12345","Applicant":{"Name":"Khalid Pumps Trading SA","CommercialRegistrationNumber":"1234567890","ApplicantIdentifierType":"123abc","ApplicantNumber":"456def","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"GuaranteeAmount":{"Type":"PRIN","Amount":"50000.00","Currency":"SAR"},"ValidityType":"LIMT","ValidityExpiryDate":"2023-01-31T13:44:00+0300","DeliveryOfOriginalGuarantee":"COUR","DeliveryTo":"BENE","DeliveryAddress":{"Name":"Mahruf Mining Minerals SA","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"Beneficiary":{"Name":"Mahruf Mining Minerals SA","CommercialRegistrationNumber":"9876543210","BeneficiaryIdentifierType":"789xyz","BeneficiaryNumber":"11112222","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"LiabilityDetails":"Mineral Equipment","Reference":"TEND","ReferenceDate1":"2023-01-31T13:44:00+0300","ReferenceDate2":"2023-03-31T13:44:00+0300","TotalOrderAmount":{"Amount":"500000.00","Currency":"SAR"},"GuaranteeValueInPercent":10,"CustomerContact":"Saud Ahmed","BeneficiaryContact":"Yasser Mohammed","BankReferenceNumber":"","TransactionReferenceNumber":"REFABC123","FurtherIdentification":"REQUEST","ApplicableRules":"NONE","ChargesAndFees":"","DetailsOfGuarantee":"Performance Guarantee No . PGFFA0815. We have been informed that you, Mahruf Mining Minerals SA, As Sulimaniyah, Riyadh, hereinafter called the BUYER have concluded the contract No. ABC123 of 05th February 2022, hereinafter called the CONTRACT, with Khalid Pumps Trading SA, KSA, hereinafter called the SELLER, according to which the SELLER will deliver to the BUYER pumps and equipment, in the total value of SAR 500000.00. As agreed the SELLER has to provide a bank guarantee in favour of the BUYER, amounting to 10 percent of the total value, i.e. SAR 50000.00 , to cover the fulfilment of the SELLER’s obligations under the CONTRACT.In consideration of the aforesaid, we, Bank of Acme, Riyadh, hereby issue the guarantee on behalf of the SELLER towards the BUYER to the maximum amount of SAR 50.000,00 (in words: SAR fifty thousand 00/100) and undertake irrevocably without consideration of any objections and defences of the SELLER or third parties and irrespective of the validity and legal effect of the CONTRACT and waiving any objections arising there from to pay to the BUYER any amount claimed from us by the BUYER up to the maximum amount of this guarantee upon receipt of the BUYER's first demand in writing, in which the BUYER simultaneously confirms that the SELLER is in breach of its obligations towards the BUYER under the CONTRACT.The obligation under this guarantee shall expire on 31st December 2023.Any claim for payment complying with the above conditions must be received by us within the validity period of this guarantee. This guarantee shall be governed by the law of KSA. Exclusive place of jurisdiction shall be KSA, Saudi Arabia.","TermsAndConditions":"Miscellaneous Terms and Conditions","LetterOfGuaranteeStartDate":"2023-02-10T13:44:00+0300"}},"Subscription":{"Webhook":{"Url":"https://api.tpp.com/webhook/callbackUrl","IsActive":false}}}}
+    ConsentResponseSigned:
+      summary: Consent Response
+      description: Consent Response
+      value: {"iss":"6586538b-a1e4-476c-b754-98c612d74496","exp":1675782186,"nbf":1675780979,"aud":["f85286a4-8cd7-4edc-af50-a81414efd560"],"iat":1675780979,"message":{"Data":{"ConsentId":"kac-558e58cb-01fa-4a8b-abfc-326d04b79bd4","CreationDateTime":"2023-01-31T13:44:00+0300","ConsentStatus":"AwaitingAuthorization","ConsentFlags":{"PartlyAuthorized":"2023-01-31T13:44:00+0300"},"ConsentStatusUpdateDateTime":"2023-01-31T13:44:00+0300","AuthorizationExpirationTimeWindow":"720:00:00","Mt798":{"CustomerReferenceNumber":"XYZ999","MessageCreationDateTime":"2023-01-31T13:44:00+0300","KindOfGuarantee":"GUAR","TypeOfGuarantee":"TEND","FormOfGuarantee":"DIRC","WordingOfGuarantee":"WDAP","SpecialTerms":"EFCT","LanguageOfStandardWording":"en","ProjectName":"ProjectOne","ProjectNumber":"12345","Applicant":{"Name":"Khalid Pumps Trading SA","CommercialRegistrationNumber":"1234567890","ApplicantIdentifierType":"123abc","ApplicantNumber":"456def","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"GuaranteeAmount":{"Type":"PRIN","Amount":"50000.00","Currency":"SAR"},"ValidityType":"LIMT","ValidityExpiryDate":"2023-01-31T13:44:00+0300","DeliveryOfOriginalGuarantee":"COUR","DeliveryTo":"BENE","DeliveryAddress":{"Name":"Mahruf Mining Minerals SA","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"Beneficiary":{"Name":"Mahruf Mining Minerals SA","CommercialRegistrationNumber":"9876543210","BeneficiaryIdentifierType":"789xyz","BeneficiaryNumber":"11112222","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"LiabilityDetails":"Pumps and Equipment","Reference":"TEND","ReferenceDate1":"2023-01-31T13:44:00+0300","ReferenceDate2":"2023-01-31T13:44:00+0300","TotalOrderAmount":{"Amount":"500000.00","Currency":"SAR"},"GuaranteeValueInPercent":10,"CustomerContact":"Saud Ahmed","BeneficiaryContact":"Yasser Mohammed","BankReferenceNumber":"","TransactionReferenceNumber":"REFABC123","FurtherIdentification":"REQUEST","ApplicableRules":"NONE","ChargesAndFees":"Service Fee of 1000.00 SAR. Additional 15% VAT Rate of 150.00 SAR","DetailsOfGuarantee":"Performance Guarantee No . PGFFA0815. We have been informed that you, Mahruf Mining Minerals SA, As Sulimaniyah, Riyadh, hereinafter called the BUYER have concluded the contract No. ABC123 of 05th February 2022, hereinafter called the CONTRACT, with Khalid Pumps Trading SA, KSA, hereinafter called the SELLER, according to which the SELLER will deliver to the BUYER pumps and equipment, in the total value of SAR 500000.00. As agreed the SELLER has to provide a bank guarantee in favour of the BUYER, amounting to 10 percent of the total value, i.e. SAR 50000.00 , to cover the fulfilment of the SELLER’s obligations under the CONTRACT.In consideration of the aforesaid, we, Bank of Acme, Riyadh, hereby issue the guarantee on behalf of the SELLER towards the BUYER to the maximum amount of SAR 50.000,00 (in words: SAR fifty thousand 00/100) and undertake irrevocably without consideration of any objections and defences of the SELLER or third parties and irrespective of the validity and legal effect of the CONTRACT and waiving any objections arising there from to pay to the BUYER any amount claimed from us by the BUYER up to the maximum amount of this guarantee upon receipt of the BUYER's first demand in writing, in which the BUYER simultaneously confirms that the SELLER is in breach of its obligations towards the BUYER under the CONTRACT.The obligation under this guarantee shall expire on 31st December 2023.Any claim for payment complying with the above conditions must be received by us within the validity period of this guarantee. This guarantee shall be governed by the law of KSA. Exclusive place of jurisdiction shall be KSA, Saudi Arabia.","TermsAndConditions":"Miscellaneous Terms and Conditions","LetterOfGuaranteeStartDate":"2023-02-10T13:44:00+0300"}},"Subscription":{"Webhook":{"Url":"https://api.tpp.com/webhook/callbackUrl","IsActive":false}},"Links":{"Self":"https://api.pasp.sa/open-banking/letter-of-guarantee/2023.11.01-final/letters-of-guarantee-consents/kac-558e58cb-01fa-4a8b-abfc-326d04b79bd4"},"Meta":{"MultipleAuthorizers":{"TotalRequired":2,"Authorizations":[{"AuthorizerId":"123123","AuthorizerName":"Wujud Omar","AuthorizerType":"Management","AuthorizationDate":"2023-01-31T13:44:00+0300","AuthorizationStatus":"Pending"},{"AuthorizerId":"123124","AuthorizerName":"Imran Qureshi","AuthorizerType":"Management","AuthorizationDate":"2023-01-31T13:44:00+0300","AuthorizationStatus":"Pending"}]}}}}      
+    PatchConsentSigned: 
+      summary: Patch Consent
+      description: Patch Consent
+      value: {"iss":"6586538b-a1e4-476c-b754-98c612d74496","exp":1675782186,"nbf":1675780979,"aud":["f85286a4-8cd7-4edc-af50-a81414efd560"],"iat":1675780979,"message":{"Data":{"ConsentStatus":"Finished","ConsentFlags":{"Closed":"2023-01-31T13:44:00+0300"}},"Subscription":{"Webhook":{"Url":"https://api.tpp.com/webhook/callbackUrl","IsActive":false}}}} 
+    LetterOfGuaranteeRequest: 
+      summary: Letter Of Guarantee Request
+      description: Letter Of Guarantee Request
+      value: {"iss":"51d73cc1-4c03-4f04-83e2-2732bd7add34","exp":1675782186,"nbf":1675780979,"aud":["0c6301dc-dcfb-4860-bfba-d76ebda97c48"],"iat":1675780979,"message":{"Data":{"ConsentId":"kac-558e58cb-01fa-4a8b-abfc-326d04b79bd4"}}}
+    LetterOfGuaranteeResponse: 
+      summary: Letter Of Guarantee Response
+      description: Letter Of Guarantee Response
+      value: {"iss":"6586538b-a1e4-476c-b754-98c612d74496","exp":1675782186,"nbf":1675780979,"aud":["f85286a4-8cd7-4edc-af50-a81414efd560"],"iat":1675780979,"message":{"Data":{"LetterOfGuaranteeId":"a5f68ff6-8ecf-445a-8f0e-907399527a20","ConsentId":"kac-558e58cb-01fa-4a8b-abfc-326d04b79bd4","CreationDateTime":"2023-01-31T13:44:00+0300","Status":"Pending","StatusUpdateDateTime":"2023-01-31T13:44:00+0300","AuthorizationExpirationTimeWindow":"720:00:00","Mt798":{"CustomerReferenceNumber":"XYZ999","MessageCreationDateTime":"2023-01-31T13:44:00+0300","KindOfGuarantee":"GUAR","TypeOfGuarantee":"TEND","FormOfGuarantee":"DIRC","WordingOfGuarantee":"STND","SpecialTerms":"EFCT","LanguageOfStandardWording":"en","ProjectName":"ProjectOne","ProjectNumber":"12345","Applicant":{"Name":"Khalid Pumps Trading SA","CommercialRegistrationNumber":"1234567890","ApplicantIdentifierType":"123abc","ApplicantNumber":"456def","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"GuaranteeAmount":{"Type":"PRIN","Amount":"50000.00","Currency":"SAR"},"ValidityType":"LIMT","ValidityExpiryDate":"2023-01-31T13:44:00+0300","DeliveryOfOriginalGuarantee":"COUR","DeliveryTo":"BENE","DeliveryAddress":{"Name":"Mahruf Mining Minerals SA","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"Beneficiary":{"Name":"Mahruf Mining Minerals SA","CommercialRegistrationNumber":"9876543210","BeneficiaryIdentifierType":"789xyz","BeneficiaryNumber":"11112222","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"LiabilityDetails":"Pumps and Equipment","Reference":"TEND","ReferenceDate1":"2023-01-31T13:44:00+0300","ReferenceDate2":"2023-01-31T13:44:00+0300","TotalOrderAmount":{"Amount":"500000.00","Currency":"SAR"},"GuaranteeValueInPercent":10,"CustomerContact":"Saud Ahmed","BeneficiaryContact":"Yasser Mohammed","BankReferenceNumber":"","TransactionReferenceNumber":"REFABC123","FurtherIdentification":"ISSUE","ApplicableRules":"NONE","ChargesAndFees":"Service Fee of 1000.00 SAR. Additional 15% VAT Rate of 150.00 SAR","DetailsOfGuarantee":"Performance Guarantee No . PGFFA0815. We have been informed that you, Mahruf Mining Minerals SA, As Sulimaniyah, Riyadh, hereinafter called the BUYER have concluded the contract No. ABC123 of 05th February 2022, hereinafter called the CONTRACT, with Khalid Pumps Trading SA, KSA, hereinafter called the SELLER, according to which the SELLER will deliver to the BUYER pumps and equipment, in the total value of SAR 500000.00. As agreed the SELLER has to provide a bank guarantee in favour of the BUYER, amounting to 10 percent of the total value, i.e. SAR 50000.00 , to cover the fulfilment of the SELLER’s obligations under the CONTRACT.In consideration of the aforesaid, we, Bank of Acme, Riyadh, hereby issue the guarantee on behalf of the SELLER towards the BUYER to the maximum amount of SAR 50.000,00 (in words: SAR fifty thousand 00/100) and undertake irrevocably without consideration of any objections and defences of the SELLER or third parties and irrespective of the validity and legal effect of the CONTRACT and waiving any objections arising there from to pay to the BUYER any amount claimed from us by the BUYER up to the maximum amount of this guarantee upon receipt of the BUYER's first demand in writing, in which the BUYER simultaneously confirms that the SELLER is in breach of its obligations towards the BUYER under the CONTRACT.The obligation under this guarantee shall expire on 31st December 2023.Any claim for payment complying with the above conditions must be received by us within the validity period of this guarantee. This guarantee shall be governed by the law of KSA. Exclusive place of jurisdiction shall be KSA, Saudi Arabia.","TermsAndConditions":"Miscellaneous Terms and Conditions","LetterOfGuaranteeStartDate":"2023-01-31T13:44:00+0300"}},"Subscription":{"Webhook":{"Url":"https://api.tpp.com/webhook/callbackUrl","IsActive":false}},"Links":{"Self":"https://api.pasp.sa/open-banking/letter-of-guarantee/2023.11.01-final/letters-of-guarantee/a5f68ff6-8ecf-445a-8f0e-907399527a20"},"Meta":{"MultipleAuthorizers":{"TotalRequired":2,"Authorizations":[{"AuthorizerId":"123123","AuthorizerName":"Wujud Omar","AuthorizerType":"Management","AuthorizationDate":"2023-01-31T13:44:00+0300","AuthorizationStatus":"Pending"},{"AuthorizerId":"123124","AuthorizerName":"Imran Qureshi","AuthorizerType":"Management","AuthorizationDate":"2023-01-31T13:44:00+0300","AuthorizationStatus":"Pending"}]}}}}
+    LetterOfGuaranteeById: 
+      summary: Letter Of Guarantee By Id
+      description: Letter Of Guarantee By Id
+      value: {"iss":"6586538b-a1e4-476c-b754-98c612d74496","exp":1675782186,"nbf":1675780979,"aud":["f85286a4-8cd7-4edc-af50-a81414efd560"],"iat":1675780979,"message":{"Data":{"LetterOfGuaranteeId":"a5f68ff6-8ecf-445a-8f0e-907399527a20","ConsentId":"kac-558e58cb-01fa-4a8b-abfc-326d04b79bd4","CreationDateTime":"2023-01-31T13:44:00+0300","Status":"Pending","StatusUpdateDateTime":"2023-01-31T13:44:00+0300","AuthorizationExpirationTimeWindow":"720:00:00","Mt798":{"CustomerReferenceNumber":"XYZ999","MessageCreationDateTime":"2023-01-31T13:44:00+0300","KindOfGuarantee":"GUAR","TypeOfGuarantee":"TEND","FormOfGuarantee":"DIRC","WordingOfGuarantee":"STND","SpecialTerms":"EFCT","LanguageOfStandardWording":"en","ProjectName":"ProjectOne","ProjectNumber":"12345","Applicant":{"Name":"Khalid Pumps Trading SA","CommercialRegistrationNumber":"1234567890","ApplicantIdentifierType":"123abc","ApplicantNumber":"456def","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"GuaranteeAmount":{"Type":"PRIN","Amount":"50000.00","Currency":"SAR"},"ValidityType":"LIMT","ValidityExpiryDate":"2023-01-31T13:44:00+0300","DeliveryOfOriginalGuarantee":"COUR","DeliveryTo":"BENE","DeliveryAddress":{"Name":"Mahruf Mining Minerals SA","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"Beneficiary":{"Name":"Mahruf Mining Minerals SA","CommercialRegistrationNumber":"9876543210","BeneficiaryIdentifierType":"789xyz","BeneficiaryNumber":"11112222","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"LiabilityDetails":"Pumps and Equipment","Reference":"TEND","ReferenceDate1":"2023-01-31T13:44:00+0300","ReferenceDate2":"2023-01-31T13:44:00+0300","TotalOrderAmount":{"Amount":"500000.00","Currency":"SAR"},"GuaranteeValueInPercent":10,"CustomerContact":"Saud Ahmed","BeneficiaryContact":"Yasser Mohammed","BankReferenceNumber":"","TransactionReferenceNumber":"REFABC123","FurtherIdentification":"ISSUE","ApplicableRules":"NONE","ChargesAndFees":"Service Fee of 1000.00 SAR. Additional 15% VAT Rate of 150.00 SAR","DetailsOfGuarantee":"Performance Guarantee No . PGFFA0815. We have been informed that you, Mahruf Mining Minerals SA, As Sulimaniyah, Riyadh, hereinafter called the BUYER have concluded the contract No. ABC123 of 05th February 2022, hereinafter called the CONTRACT, with Khalid Pumps Trading SA, KSA, hereinafter called the SELLER, according to which the SELLER will deliver to the BUYER pumps and equipment, in the total value of SAR 500000.00. As agreed the SELLER has to provide a bank guarantee in favour of the BUYER, amounting to 10 percent of the total value, i.e. SAR 50000.00 , to cover the fulfilment of the SELLER’s obligations under the CONTRACT.In consideration of the aforesaid, we, Bank of Acme, Riyadh, hereby issue the guarantee on behalf of the SELLER towards the BUYER to the maximum amount of SAR 50.000,00 (in words: SAR fifty thousand 00/100) and undertake irrevocably without consideration of any objections and defences of the SELLER or third parties and irrespective of the validity and legal effect of the CONTRACT and waiving any objections arising there from to pay to the BUYER any amount claimed from us by the BUYER up to the maximum amount of this guarantee upon receipt of the BUYER's first demand in writing, in which the BUYER simultaneously confirms that the SELLER is in breach of its obligations towards the BUYER under the CONTRACT.The obligation under this guarantee shall expire on 31st December 2023.Any claim for payment complying with the above conditions must be received by us within the validity period of this guarantee. This guarantee shall be governed by the law of KSA. Exclusive place of jurisdiction shall be KSA, Saudi Arabia.","TermsAndConditions":"Miscellaneous Terms and Conditions","LetterOfGuaranteeStartDate":"2023-01-31T13:44:00+0300"}},"Subscription":{"Webhook":{"Url":"https://api.tpp.com/webhook/callbackUrl","IsActive":false}},"Links":{"Self":"https://api.pasp.sa/open-banking/letter-of-guarantee/2023.11.01-final/letters-of-guarantee/a5f68ff6-8ecf-445a-8f0e-907399527a20"},"Meta":{"MultipleAuthorizers":{"TotalRequired":2,"Authorizations":[{"AuthorizerId":"123123","AuthorizerName":"Wujud Omar","AuthorizerType":"Management","AuthorizationDate":"2023-01-31T13:44:00+0300","AuthorizationStatus":"Pending"},{"AuthorizerId":123124,"AuthorizerName":"Imran Qureshi","AuthorizerType":"Management","AuthorizationDate":"2023-01-31T13:44:00+0300","AuthorizationStatus":"Pending"}]}}}}
+    Error500InternalServerErrorSigned:
+      summary: 500 Internal Server Error
+      description: 500 Internal Server Error
+      value: {"iss":"c50f0152-49bb-4dc4-b866-b625271c4e78","exp":3349494246,"nbf":1675765189,"aud":["e63df191-5fff-4e9c-bba2-b273c94e87f0"],"iat":1675765189,"message":{"Errors":[{"Code":"KSAOB.GenericError","Message":"An Internal Server error has occurred. Please retry in 60 seconds."}]}}
+    Error400BadRequestSigned:
+      summary: 400 Bad Request
+      description: 400 Bad Request
+      value: {"iss":"c50f0152-49bb-4dc4-b866-b625271c4e78","exp":3349494246,"nbf":1675765189,"aud":["e63df191-5fff-4e9c-bba2-b273c94e87f0"],"iat":1675765189,"message":{"Errors":[{"Code":"KSAOB.GenericError","Message":"A mandatory field is missing."}]}} 
+    Error403ForbiddenSigned:
+      summary: 403 Forbidden
+      description: 403 Forbidden
+      value: {"iss":"c50f0152-49bb-4dc4-b866-b625271c4e78","exp":3349494246,"nbf":1675765189,"aud":["e63df191-5fff-4e9c-bba2-b273c94e87f0"],"iat":1675765189,"message":{"Errors":[{"Code":"KSAOB.AccessToken.InvalidScope","Message":"The access token did not have an appropriate scope attached to it."}]}}
+    WebhookRequestSigned:
+      summary: Signed Webhook Request
+      description: Signed Webhook Request
+      value: {"iss":"6586538b-a1e4-476c-b754-98c612d74496","exp":1675782186,"nbf":1675780979,"aud":["f85286a4-8cd7-4edc-af50-a81414efd560"],"iat":1675780979,"message":{"Data":{"LetterOfGuaranteeId":"a5f68ff6-8ecf-445a-8f0e-907399527a20","ConsentId":"kac-558e58cb-01fa-4a8b-abfc-326d04b79bd4","CreationDateTime":"2023-01-31T13:44:00+0300","Status":"Approved","StatusUpdateDateTime":"2023-01-31T13:44:00+0300","AuthorizationExpirationTimeWindow":"720:00:00","Mt798":{"CustomerReferenceNumber":"XYZ999","MessageCreationDateTime":"2023-01-31T13:44:00+0300","KindOfGuarantee":"GUAR","TypeOfGuarantee":"TEND","FormOfGuarantee":"DIRC","WordingOfGuarantee":"STND","SpecialTerms":"EFCT","LanguageOfStandardWording":"en","ProjectName":"ProjectOne","ProjectNumber":"12345","Applicant":{"Name":"Khalid Pumps Trading SA","CommercialRegistrationNumber":"1234567890","ApplicantIdentifierType":"123abc","ApplicantNumber":"456def","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"GuaranteeAmount":{"Type":"PRIN","Amount":"50000.00","Currency":"SAR"},"ValidityType":"LIMT","ValidityExpiryDate":"2023-01-31T13:44:00+0300","DeliveryOfOriginalGuarantee":"COUR","DeliveryTo":"BENE","DeliveryAddress":{"Name":"Mahruf Mining Minerals SA","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"Beneficiary":{"Name":"Mahruf Mining Minerals SA","CommercialRegistrationNumber":"9876543210","BeneficiaryIdentifierType":"789xyz","BeneficiaryNumber":"11112222","Address":[{"AddressType":"KSAOB.Business","ShortAddress":"SAMA1234","BuildingNumber":"1234","UnitNumber":"10","StreetName":"King Faisal Road","SecondaryNumber":"1234","District":"Olaya Dist.","PostalCode":"11461","City":"Riyadh","Country":"SA"}]},"LiabilityDetails":"Pumps and Equipment","Reference":"TEND","ReferenceDate1":"2023-01-31T13:44:00+0300","ReferenceDate2":"2023-01-31T13:44:00+0300","TotalOrderAmount":{"Amount":"500000.00","Currency":"SAR"},"GuaranteeValueInPercent":10,"CustomerContact":"Saud Abdulhamid","BeneficiaryContact":"Yasser Alshahrani","BankReferenceNumber":"","TransactionReferenceNumber":"REFABC123","FurtherIdentification":"ISSUE","ApplicableRules":"NONE","ChargesAndFees":"Service Fee of 1000.00 SAR. Additional 15% VAT Rate of 150.00 SAR","DetailsOfGuarantee":"Performance Guarantee No . PGFFA0815. We have been informed that you, Mahruf Mining Minerals SA, As Sulimaniyah, Riyadh, hereinafter called the BUYER have concluded the contract No. ABC123 of 05th February 2022, hereinafter called the CONTRACT, with Khalid Pumps Trading SA, KSA, hereinafter called the SELLER, according to which the SELLER will deliver to the BUYER pumps and equipment, in the total value of SAR 500000.00. As agreed the SELLER has to provide a bank guarantee in favour of the BUYER, amounting to 10 percent of the total value, i.e. SAR 50000.00 , to cover the fulfilment of the SELLER’s obligations under the CONTRACT.In consideration of the aforesaid, we, Bank of Acme, Riyadh, hereby issue the guarantee on behalf of the SELLER towards the BUYER to the maximum amount of SAR 50.000,00 (in words: SAR fifty thousand 00/100) and undertake irrevocably without consideration of any objections and defences of the SELLER or third parties and irrespective of the validity and legal effect of the CONTRACT and waiving any objections arising there from to pay to the BUYER any amount claimed from us by the BUYER up to the maximum amount of this guarantee upon receipt of the BUYER's first demand in writing, in which the BUYER simultaneously confirms that the SELLER is in breach of its obligations towards the BUYER under the CONTRACT.The obligation under this guarantee shall expire on 31st December 2023.Any claim for payment complying with the above conditions must be received by us within the validity period of this guarantee. This guarantee shall be governed by the law of KSA. Exclusive place of jurisdiction shall be KSA, Saudi Arabia.","TermsAndConditions":"Miscellaneous Terms and Conditions","LetterOfGuaranteeStartDate":"2023-01-31T13:44:00+0300"}},"Links":{"Self":"https://api.pasp.sa/open-banking/letter-of-guarantee/2023.11.01-final/letters-of-guarantee/a5f68ff6-8ecf-445a-8f0e-907399527a20"},"EventMeta":{"EventDateTime":"2023-01-31T14:12:55+0300","EventResource":"/letters-of-guarantee/a5f68ff6-8ecf-445a-8f0e-907399527a20","EventType":"KSAOB.Resource.Updated","ConsentId":"kac-558e58cb-01fa-4a8b-abfc-326d04b79bd4"}}}
